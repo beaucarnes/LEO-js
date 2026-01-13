@@ -25,7 +25,6 @@ const NUTJS_KEY_MAPPING = {
    "‒": { key: Key.Tab },
 };
 
-const TYPING_DELAY = 5;
 const HOTKEYS = "abcdefghijklmnopqrstuvwxyz".split(""); // TO-DO: Interface for choosing hotkeys
 
 const WINDOW_CONFIG = {
@@ -41,7 +40,6 @@ const WINDOW_CONFIG = {
 
 module.exports = {
    NUTJS_KEY_MAPPING,
-   TYPING_DELAY,
    HOTKEYS,
    WINDOW_CONFIG,
 };
