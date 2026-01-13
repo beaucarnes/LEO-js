@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen } = require("electron");
+const { app, BrowserWindow, ipcMain, screen, dialog } = require("electron");
 const { WINDOW_CONFIG } = require("./constants");
 const state = require("./state");
 const HotkeyManager = require("./hotkey-manager");
@@ -48,6 +48,22 @@ ipcMain.on("resize-window", () => {
    const { width, height } = display.workAreaSize;
    state.mainWindow.setSize(width - 100, height);
    state.mainWindow.setPosition(50, 0);
+});
+
+ipcMain.handle("show-save-dialog", async () => {
+   const result = await dialog.showSaveDialog(state.mainWindow, {
+      filters: [{ name: "JSON", extensions: ["json"] }],
+      defaultPath: "lesson.json"
+   });
+   return result.filePath;
+});
+
+ipcMain.handle("show-open-dialog", async () => {
+   const result = await dialog.showOpenDialog(state.mainWindow, {
+      filters: [{ name: "JSON", extensions: ["json"] }],
+      properties: ["openFile"]
+   });
+   return result.filePaths[0];
 });
 
 app.whenReady().then(createWindow);

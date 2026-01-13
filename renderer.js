@@ -6,6 +6,7 @@ let currentStepIndex = 0;
 let executionSteps = [];
 let currentFilePath = "";
 let selectedBlockIndex = null;
+let hasUnsavedChanges = false;
 
 window.addEventListener("DOMContentLoaded", () => {
    const lastFile = localStorage.getItem("lastLessonPath");
@@ -40,18 +41,13 @@ function setupGlobalIpcListeners() {
 
 function setupEventListeners() {
    document.getElementById("newBtn").onclick = createNewLesson;
-   document.getElementById("loadBtn").onclick = () =>
-      document.getElementById("fileInput").click();
+   document.getElementById("loadBtn").onclick = loadLesson;
    document.getElementById("saveBtn").onclick = saveLesson;
    document.getElementById("toggleBtn").onclick = toggleActive;
 
    document.getElementById("addCommentBtn").onclick = () => addBlock("comment");
    document.getElementById("addCodeBtn").onclick = () => addBlock("code");
    document.getElementById("removeBlockBtn").onclick = removeBlock;
-
-   document.getElementById("fileInput").onchange = (e) => {
-      if (e.target.files[0]) loadFilePath(e.target.files[0].path, 0);
-   };
 }
 
 function setupKeyboardShortcuts() {
@@ -80,29 +76,47 @@ function setupKeyboardShortcuts() {
    });
 }
 
-function createNewLesson() {
+async function createNewLesson() {
+   const filePath = await ipcRenderer.invoke("show-save-dialog");
+   
+   if (!filePath) {
+      return; // user cancelled
+   }
+
    const defaultData = [
-      { type: "comment", text: "Enter plan title" },
-      { type: "code", text: "Enter first code snippet" },
+      { type: "comment", text: "Enter lesson title" },
+      { type: "code", text: "// Enter first code snippet" },
    ];
 
-   currentFilePath = "";
-   localStorage.removeItem("lastLessonPath");
-   localStorage.removeItem("lastStepIndex");
-
+   currentFilePath = filePath;
    lessonData = defaultData;
    resetProgress();
 
-   renderLesson();
-   alert(
-      "New lesson created. Don't forget to 'Save' to choose a file location!"
-   );
+   // save the new file
+   fs.writeFile(currentFilePath, JSON.stringify(lessonData, null, 2), (err) => {
+      if (err) {
+         alert("Failed to create file: " + err);
+         currentFilePath = "";
+         return;
+      }
+      
+      localStorage.setItem("lastLessonPath", currentFilePath);
+      hasUnsavedChanges = false;
+      renderLesson();
+   });
+}
+
+async function loadLesson() {
+   const filePath = await ipcRenderer.invoke("show-open-dialog");
+   
+   if (filePath) {
+      loadFilePath(filePath, 0);
+   }
 }
 
 function navigateBlocks(direction) {
    if (!lessonData.length) return;
 
-   // find current block
    let currentBlockIdx = 0;
    if (currentStepIndex < executionSteps.length) {
       currentBlockIdx = executionSteps[currentStepIndex].blockIndex;
@@ -119,7 +133,6 @@ function navigateBlocks(direction) {
       newBlockIdx = lessonData.length - 1;
    }
 
-   // find the first step (stepIndex) that belongs to this new block
    const targetStep = executionSteps.find(
       (step) => step.blockIndex === newBlockIdx
    );
@@ -142,41 +155,43 @@ function resetProgress() {
 function loadFilePath(path, savedIndex = 0) {
    currentFilePath = path;
    fs.readFile(path, "utf8", (err, data) => {
-      if (err) return console.error(err);
+      if (err) {
+         alert("Failed to load file: " + err);
+         return;
+      }
+      
       try {
          lessonData = JSON.parse(data);
          localStorage.setItem("lastLessonPath", path);
          currentStepIndex = savedIndex;
+         hasUnsavedChanges = false;
 
          resetProgress();
-
          renderLesson();
          setInitialStateToInactive();
       } catch (e) {
-         console.error("JSON Error:", e);
+         alert("Invalid JSON file: " + e);
       }
    });
 }
 
 function saveLesson() {
    if (!currentFilePath) {
-      const { dialog } = require("electron").remote;
-      const path = dialog.showSaveDialogSync({
-         filters: [{ name: "JSON", extensions: ["json"] }],
-      });
-
-      if (path) {
-         currentFilePath = path;
-         localStorage.setItem("lastLessonPath", path);
-      } else {
-         return; // user cancelled
-      }
+      alert("No file is currently open. Use 'New' to create a file first.");
+      return;
    }
 
-   fs.writeFile(currentFilePath, JSON.stringify(lessonData, null), (err) => {
-      if (err) alert("Save failed: " + err);
-      else alert("Saved successfully!");
+   fs.writeFile(currentFilePath, JSON.stringify(lessonData, null, 2), (err) => {
+      if (err) {
+         alert("Save failed: " + err);
+      } else {
+         hasUnsavedChanges = false;
+      }
    });
+}
+
+function markAsChanged() {
+   hasUnsavedChanges = true;
 }
 
 function renderLesson() {
@@ -196,6 +211,7 @@ function renderLesson() {
       if (selectedBlockIndex === blockIdx) {
          blockDiv.classList.add("selected");
       }
+      
       blockDiv.onclick = (e) => {
          if (!isTypingActive) {
             if (selectedBlockIndex === blockIdx) return;
@@ -224,6 +240,7 @@ function renderLesson() {
          blockDiv.textContent = block.text;
          blockDiv.oninput = () => {
             block.text = blockDiv.textContent;
+            markAsChanged();
          };
 
          executionSteps.push({
@@ -237,14 +254,13 @@ function renderLesson() {
          globalStepCounter++;
       } else if (block.type === "code") {
          if (selectedBlockIndex === blockIdx && !isTypingActive) {
-            // edit mode
             blockDiv.contentEditable = "true";
             blockDiv.innerText = block.text;
             blockDiv.oninput = () => {
                block.text = blockDiv.innerText;
+               markAsChanged();
             };
          } else {
-            // auto-typing mode
             blockDiv.contentEditable = "false";
             for (const char of block.text) {
                const span = document.createElement("span");
@@ -288,7 +304,6 @@ function jumpTo(index) {
          step.element.classList.remove("active-comment", "consumed");
       }
 
-      // past items
       if (i < index) {
          step.element.classList.add("consumed");
       }
@@ -359,7 +374,7 @@ function advanceCursor() {
 }
 
 function populateSpecialKeys() {
-   const keys = ["↢", "►", "💾", "↑", "↓", "←", "→", "‒"]; // TO-DO: Interface for choosing special keys
+   const keys = ["↢", "►", "💾", "↑", "↓", "←", "→", "‒"];
    const grid = document.getElementById("special-keys-container");
    grid.innerHTML = "";
    keys.forEach((char) => {
@@ -372,6 +387,7 @@ function populateSpecialKeys() {
             const activeDiv =
                document.querySelectorAll(".block")[selectedBlockIndex];
             lessonData[selectedBlockIndex].text = activeDiv.innerText;
+            markAsChanged();
          }
       };
       grid.appendChild(btn);
@@ -382,6 +398,7 @@ function addBlock(type) {
    const newBlock = { type, text: type === "code" ? "" : "New Comment" };
    if (selectedBlockIndex === null) lessonData.push(newBlock);
    else lessonData.splice(selectedBlockIndex + 1, 0, newBlock);
+   markAsChanged();
    renderLesson();
 }
 
@@ -390,6 +407,7 @@ function removeBlock() {
    lessonData.splice(selectedBlockIndex, 1);
    selectedBlockIndex = null;
    document.getElementById("editor-sidebar").classList.add("hidden");
+   markAsChanged();
    renderLesson();
 }
 
