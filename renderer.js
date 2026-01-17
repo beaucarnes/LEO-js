@@ -7,6 +7,8 @@ let executionSteps = [];
 let currentFilePath = "";
 let selectedBlockIndex = null;
 let hasUnsavedChanges = false;
+let timerInterval = null;
+let timerSeconds = 0;
 
 window.addEventListener("DOMContentLoaded", () => {
    const lastFile = localStorage.getItem("lastLessonPath");
@@ -48,6 +50,10 @@ function setupEventListeners() {
    document.getElementById("addCommentBtn").onclick = () => addBlock("comment");
    document.getElementById("addCodeBtn").onclick = () => addBlock("code");
    document.getElementById("removeBlockBtn").onclick = removeBlock;
+
+   document.getElementById("timerStartBtn").onclick = startTimer;
+   document.getElementById("timerPlusBtn").onclick = () => adjustTimer(10);
+   document.getElementById("timerMinusBtn").onclick = () => adjustTimer(-10);
 }
 
 function setupKeyboardShortcuts() {
@@ -445,6 +451,57 @@ function removeBlock() {
 
 function setInitialStateToInactive() {
    ipcRenderer.send("set-active", false);
+}
+
+function startTimer() {
+   timerSeconds = 10 * 60; // 10 minutes
+   document.getElementById("timerStartBtn").style.display = "none";
+   document.getElementById("timerControls").style.display = "flex";
+   updateTimerDisplay();
+   
+   timerInterval = setInterval(() => {
+      timerSeconds--;
+      updateTimerDisplay();
+      
+      if (timerSeconds <= 0) {
+         stopTimer();
+      }
+   }, 1000);
+}
+
+function adjustTimer(minutes) {
+   timerSeconds += minutes * 60;
+   
+   if (timerSeconds <= 0) {
+      stopTimer();
+   } else {
+      updateTimerDisplay();
+   }
+}
+
+function stopTimer() {
+   if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+   }
+   timerSeconds = 0;
+   document.getElementById("timerStartBtn").style.display = "block";
+   document.getElementById("timerControls").style.display = "none";
+}
+
+function updateTimerDisplay() {
+   const hours = Math.floor(timerSeconds / 3600);
+   const minutes = Math.floor((timerSeconds % 3600) / 60);
+   const seconds = timerSeconds % 60;
+   
+   let display;
+   if (hours > 0) {
+      display = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+   } else {
+      display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+   }
+   
+   document.getElementById("timerDisplay").textContent = display;
 }
 
 ipcRenderer.on("advance-cursor", advanceCursor);

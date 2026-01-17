@@ -1,4 +1,3 @@
-/* --- Base Reset & Layout --- */
 * {
     margin: 0;
     padding: 0;
@@ -14,7 +13,6 @@ body {
     padding-bottom: 50px;
 }
 
-/* --- Header Controls --- */
 #controls {
     position: sticky;
     top: 0;
@@ -52,7 +50,45 @@ body {
     font-size: 12px;
 }
 
-/* --- Lesson Container --- */
+#timerSection {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+}
+
+.timer-clock-btn {
+    font-size: 18px;
+    padding: 5px 10px;
+}
+
+.timer-controls {
+    display: none;
+    align-items: center;
+    gap: 5px;
+}
+
+.timer-adjust-btn {
+    padding: 5px 12px;
+    font-weight: bold;
+}
+
+.timer-adjust-btn.minus {
+    background: #e74c3c;
+}
+
+.timer-adjust-btn.plus {
+    background: #27ae60;
+}
+
+.timer-display {
+    color: #ecf0f1;
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 60px;
+    text-align: center;
+}
+
 #lesson-container {
     max-width: 900px;
     margin: 20px auto;
@@ -64,17 +100,15 @@ body {
     padding: 10px 15px;
     border-bottom: 1px solid #ddd;
     position: relative;
-    border-left: 5px solid transparent; /* Prepare for selection border */
+    border-left: 5px solid transparent;
 }
 
-/* Block Selection (Edit Mode) */
 .block.selected {
     background-color: #f0f8ff;
     border-left-color: #3498db;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
 }
 
-/* Comment Blocks */
 .comment-block {
     background: #fff9c4;
     color: #333;
@@ -83,17 +117,15 @@ body {
     transition: all 0.2s ease;
 }
 
-/* --- NEW: Active Comment Highlight (Teaching Mode) --- */
 .comment-block.active-comment {
-    background: #2c3e50;         /* Dark blue matching your header */
-    color: #f1c40f;              /* Yellow text for high contrast */
+    background: #2c3e50;         /* dark blue matching your header */
+    color: #f1c40f;              /* yellow text for high contrast */
     border-left: 5px solid #e74c3c;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     transform: scale(1.01);
     z-index: 10;
 }
 
-/* Code Blocks */
 .code-block {
     background: white;
     font-family: "Consolas", "Monaco", "Courier New", monospace;
@@ -101,18 +133,17 @@ body {
     word-wrap: break-word;
 }
 
-/* --- Character States --- */
 .char {
     display: inline-block;
     position: relative;
 }
 
 .char.consumed {
-    color: #bdc3c7; /* Lighter grey to show it's done */
+    color: #bdc3c7;
 }
 
 .char.cursor {
-    background: #e74c3c; /* Red cursor for visibility */
+    background: #e74c3c;
     color: white;
     animation: blink 1s infinite;
     padding: 0 1px;
@@ -124,10 +155,9 @@ body {
     50%, 100% { opacity: 0.3; }
 }
 
-/* --- Progress Bar --- */
 .progress-bar {
     position: fixed;
-    top: 55px; /* Just below controls */
+    top: 55px; /* just below controls */
     left: 0;
     height: 4px;
     background: #e74c3c;
@@ -136,7 +166,6 @@ body {
     transition: width 0.1s;
 }
 
-/* --- Sidebar --- */
 .sidebar {
     position: fixed;
     right: 10px;
@@ -168,7 +197,6 @@ body {
     text-align: center;
 }
 
-/* Sidebar Buttons */
 .add-btn, .remove-btn, .key-btn {
     width: 35px;
     height: 35px;
