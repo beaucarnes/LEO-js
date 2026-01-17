@@ -9,6 +9,9 @@ let selectedBlockIndex = null;
 let hasUnsavedChanges = false;
 let timerInterval = null;
 let timerSeconds = 0;
+let keyPressLog = [];
+let keyPressLogPath = "";
+let sessionStartTime = null;
 
 window.addEventListener("DOMContentLoaded", () => {
    const lastFile = localStorage.getItem("lastLessonPath");
@@ -16,7 +19,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
    if (lastFile && fs.existsSync(lastFile)) {
       loadFilePath(lastFile, lastIndex ? parseInt(lastIndex) : 0);
+   } else {
+      // initialize logging even without a file
+      initializeKeyPressLog();
    }
+   
    populateSpecialKeys();
    setupEventListeners();
    setupKeyboardShortcuts();
@@ -58,6 +65,8 @@ function setupEventListeners() {
 
 function setupKeyboardShortcuts() {
    document.addEventListener("keydown", (e) => {
+      logKeyPress(e);
+
       if (e.ctrlKey && e.code === "KeyP") {
          e.preventDefault();
          toggleActive();
@@ -108,6 +117,7 @@ async function createNewLesson() {
       
       localStorage.setItem("lastLessonPath", currentFilePath);
       hasUnsavedChanges = false;
+      initializeKeyPressLog();
       renderLesson();
    });
 }
@@ -173,6 +183,7 @@ function loadFilePath(path, savedIndex = 0) {
          hasUnsavedChanges = false;
 
          resetProgress();
+         initializeKeyPressLog();
          renderLesson();
          setInitialStateToInactive();
       } catch (e) {
@@ -398,6 +409,26 @@ function advanceCursor() {
 
    if (currentStep.type === "char") {
       currentStep.element.classList.add("consumed");
+      
+      // log the character being typed BEFORE sending it
+      if (sessionStartTime) {
+         const logEntry = {
+            timestamp: Date.now(),
+            relativeTime: Date.now() - sessionStartTime,
+            char: currentStep.char,
+            isTypingActive: true,
+            source: "auto-typed",
+            stepIndex: currentStepIndex,
+            blockIndex: currentStep.blockIndex
+         };
+         keyPressLog.push(logEntry);
+         
+         // save every 10 keypresses to avoid too many writes
+         if (keyPressLog.length % 10 === 0) {
+            saveKeyPressLog();
+         }
+      }
+      
       ipcRenderer.send("type-character", currentStep.char);
       currentStepIndex++;
    } else if (currentStep.type === "block") {
@@ -503,5 +534,72 @@ function updateTimerDisplay() {
    
    document.getElementById("timerDisplay").textContent = display;
 }
+
+function initializeKeyPressLog() {
+   keyPressLog = [];
+   sessionStartTime = Date.now();
+   
+   const path = require("path");
+   let dir, basename;
+   
+   if (currentFilePath) {
+      dir = path.dirname(currentFilePath);
+      basename = path.basename(currentFilePath, ".json");
+   } else {
+      // if no file is loaded, use a temporary location
+      dir = require("os").tmpdir();
+      basename = "unnamed_lesson";
+   }
+   
+   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+   keyPressLogPath = path.join(dir, `${basename}_key_presses_${timestamp}.json`);
+   
+   saveKeyPressLog();
+}
+
+function logKeyPress(event) {
+   if (!sessionStartTime) return;
+   
+   const logEntry = {
+      timestamp: Date.now(),
+      relativeTime: Date.now() - sessionStartTime,
+      key: event.key,
+      code: event.code,
+      ctrlKey: event.ctrlKey,
+      shiftKey: event.shiftKey,
+      altKey: event.altKey,
+      metaKey: event.metaKey,
+      isTypingActive: document.getElementById("toggleBtn").textContent === "STOP",
+      source: "app-focused"
+   };
+   
+   keyPressLog.push(logEntry);
+   
+   // save every 10 keypresses to avoid too many writes
+   if (keyPressLog.length % 10 === 0) {
+      saveKeyPressLog();
+   }
+}
+
+function saveKeyPressLog() {
+   if (!keyPressLogPath) return;
+   
+   const logData = {
+      lessonFile: currentFilePath || "No file loaded",
+      sessionStart: sessionStartTime,
+      keyPresses: keyPressLog
+   };
+   
+   fs.writeFile(keyPressLogPath, JSON.stringify(logData, null, 2), (err) => {
+      if (err) {
+         console.error("Failed to save key press log:", err);
+      }
+   });
+}
+
+// save log when window closes
+window.addEventListener("beforeunload", () => {
+   saveKeyPressLog();
+});
 
 ipcRenderer.on("advance-cursor", advanceCursor);
