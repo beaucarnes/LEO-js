@@ -38,8 +38,19 @@ const WINDOW_CONFIG = {
    frame: true,
 };
 
+const TIMER_CONFIG = {
+   DEFAULT_MINUTES: 90,
+   ADJUSTMENT_MINUTES: 10,
+};
+
+const LOG_CONFIG = {
+   SAVE_INTERVAL: 10,
+};
+
 module.exports = {
    NUTJS_KEY_MAPPING,
    HOTKEYS,
    WINDOW_CONFIG,
+   TIMER_CONFIG,
+   LOG_CONFIG,
 };
