@@ -3,6 +3,8 @@ const { WINDOW_CONFIG } = require("./constants");
 const state = require("./state");
 const HotkeyManager = require("./hotkey-manager");
 const KeyboardHandler = require("./keyboard-handler");
+const LEOBroadcastServer = require("./websocket-server");
+const broadcastServer = new LEOBroadcastServer(8080);
 
 const hotkeyManager = new HotkeyManager();
 const keyboardHandler = new KeyboardHandler(hotkeyManager);
@@ -11,7 +13,15 @@ function createWindow() {
    state.mainWindow = new BrowserWindow(WINDOW_CONFIG);
    state.mainWindow.loadFile("index.html");
 
+   broadcastServer.start();
+   state.broadcastServer = broadcastServer;
+
    hotkeyManager.registerSystemShortcuts();
+}
+
+function cleanup() {
+   hotkeyManager.unregisterTypingHotkeys();
+   state.reset();
 }
 
 ipcMain.on("set-active", (event, isActive) => {
@@ -22,11 +32,6 @@ ipcMain.on("set-active", (event, isActive) => {
       hotkeyManager.unregisterTypingHotkeys();
    }
 });
-
-function cleanup() {
-   hotkeyManager.unregisterTypingHotkeys();
-   state.reset();
-}
 
 ipcMain.on("type-character", (event, char) => {
    keyboardHandler.typeCharacter(char);
@@ -64,6 +69,30 @@ ipcMain.handle("show-open-dialog", async () => {
       properties: ["openFile"]
    });
    return result.filePaths[0];
+});
+
+ipcMain.on("broadcast-lesson-data", (event, data) => {
+   broadcastServer.updateLessonData(data);
+});
+
+ipcMain.on("broadcast-cursor", (event, currentStep) => {
+   broadcastServer.updateCursor(currentStep);
+});
+
+ipcMain.on("broadcast-progress", (event, data) => {
+   broadcastServer.updateProgress(data.currentStep, data.totalSteps);
+});
+
+ipcMain.on("broadcast-timer", (event, timeRemaining) => {
+   broadcastServer.updateTimer(timeRemaining);
+});
+
+ipcMain.on("broadcast-active", (event, isActive) => {
+   broadcastServer.updateActiveState(isActive);
+});
+
+ipcMain.on("broadcast-lesson", (event, lessonName) => {
+   broadcastServer.updateLessonName(lessonName);
 });
 
 app.whenReady().then(createWindow);

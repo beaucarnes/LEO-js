@@ -9,32 +9,6 @@ class TimerManager {
       this.onCompleteCallback = null;
    }
 
-   start(minutes = TIMER_CONFIG.DEFAULT_MINUTES) {
-      if (this.isRunning) {
-         this.stop();
-      }
-
-      this.seconds = minutes * 60;
-      this.isRunning = true;
-
-      this.interval = setInterval(() => {
-         this.seconds--;
-         
-         if (this.onTickCallback) {
-            this.onTickCallback(this.getFormattedTime());
-         }
-
-         if (this.seconds <= 0) {
-            this.complete();
-         }
-      }, 1000);
-
-      // trigger initial display update
-      if (this.onTickCallback) {
-         this.onTickCallback(this.getFormattedTime());
-      }
-   }
-
    stop() {
       if (this.interval) {
          clearInterval(this.interval);
@@ -46,8 +20,48 @@ class TimerManager {
 
    complete() {
       this.stop();
+
+      if (typeof require !== "undefined") {
+         const { ipcRenderer } = require("electron");
+         ipcRenderer.send("broadcast-timer", null);
+      }
+
       if (this.onCompleteCallback) {
          this.onCompleteCallback();
+      }
+   }
+
+   start(minutes = TIMER_CONFIG.DEFAULT_MINUTES) {
+      if (this.isRunning) {
+         this.stop();
+      }
+
+      this.seconds = minutes * 60;
+      this.isRunning = true;
+
+      this.interval = setInterval(() => {
+         this.seconds--;
+         
+         const timeString = this.getFormattedTime();
+
+         if (this.onTickCallback) {
+            this.onTickCallback(timeString);
+         }
+
+         if (typeof require !== "undefined") {
+            const { ipcRenderer } = require("electron");
+            ipcRenderer.send("broadcast-timer", timeString);
+         }
+
+         if (this.seconds <= 0) {
+            this.complete();
+         }
+      }, 1000);
+
+      const initialTime = this.getFormattedTime();
+      if (this.onTickCallback) this.onTickCallback(initialTime);
+      if (typeof require !== "undefined") {
+         require("electron").ipcRenderer.send("broadcast-timer", initialTime);
       }
    }
 
@@ -56,8 +70,15 @@ class TimerManager {
 
       if (this.seconds <= 0) {
          this.complete();
-      } else if (this.onTickCallback) {
-         this.onTickCallback(this.getFormattedTime());
+      } else {
+         const timeString = this.getFormattedTime();
+         if (this.onTickCallback) {
+            this.onTickCallback(timeString);
+         }
+         // so the phone updates when you click +/-
+         if (typeof require !== "undefined") {
+            require("electron").ipcRenderer.send("broadcast-timer", timeString);
+         }
       }
    }
 
@@ -67,9 +88,9 @@ class TimerManager {
       const seconds = this.seconds % 60;
 
       if (hours > 0) {
-         return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+         return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
       } else {
-         return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+         return `${minutes}:${seconds.toString().padStart(2, "0")}`;
       }
    }
 

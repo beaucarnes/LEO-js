@@ -140,6 +140,10 @@ function loadFilePath(filePath, savedIndex = 0) {
       logManager.initialize(filePath);
       renderLesson();
       setInitialStateToInactive();
+
+      const path = require('path');
+      const lessonName = path.basename(filePath, '.json');
+      ipcRenderer.send("broadcast-lesson", lessonName);
    });
 }
 
@@ -205,6 +209,8 @@ function renderLesson() {
    if (isTypingActive) {
       updateCursor();
    }
+
+   broadcastLessonData();
 }
 
 function handleBlockClick(e, block, blockIdx) {
@@ -301,6 +307,8 @@ function jumpTo(index) {
 
    localStorage.setItem("lastStepIndex", currentStepIndex);
    updateCursor();
+
+   ipcRenderer.send("broadcast-cursor", currentStepIndex);
 }
 
 function toggleActive() {
@@ -308,6 +316,8 @@ function toggleActive() {
 
    uiManager.setTypingActive(isCurrentlyInactive);
    ipcRenderer.send("set-active", isCurrentlyInactive);
+   ipcRenderer.send("broadcast-active", isCurrentlyInactive);
+
    renderLesson();
 }
 
@@ -328,6 +338,12 @@ function updateCursor() {
 
    const progress = (currentStepIndex / executionSteps.length) * 100 || 0;
    uiManager.updateProgressBar(progress);
+
+   ipcRenderer.send("broadcast-cursor", currentStepIndex);
+   ipcRenderer.send("broadcast-progress", {
+      currentStep: currentStepIndex,
+      totalSteps: executionSteps.length
+   });
 }
 
 function advanceCursor() {
@@ -394,6 +410,20 @@ function startTimer() {
 
 function adjustTimer(minutes) {
    timerManager.adjust(minutes);
+}
+
+function broadcastLessonData() {
+   const blocks = lessonManager.getAllBlocks();
+   
+   ipcRenderer.send("broadcast-lesson-data", {
+      blocks: blocks,
+      executionSteps: executionSteps.map(step => ({
+         type: step.type,
+         blockIndex: step.blockIndex,
+         globalIndex: step.globalIndex,
+         char: step.char
+      }))
+   });
 }
 
 window.addEventListener("beforeunload", () => {

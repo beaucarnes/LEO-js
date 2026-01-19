@@ -145,7 +145,6 @@ body {
 
 .progress-bar {
     position: fixed;
-    top: 55px; /* just below controls */
     left: 0;
     height: 4px;
     background: #e74c3c;
