@@ -1,0 +1,266 @@
+[
+  {
+    "type": "comment",
+    "text": "Live Server ON\nCREATE index.html asd"
+  },
+  {
+    "type": "code",
+    "text": "<!DOCTYPE html>\n<html>\n↢</html>↑►\n<head>\n</head>↑►\n<title>Emordnilap JS</title>↓\n<body>\n</body>💾"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "TEST title"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "code",
+    "text": "↑►\n<input id=\"inputText\" value=\"FLOW\">💾"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "TEST input"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "code",
+    "text": "↑← style=\"text-align: center;\"💾"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "TEST align"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "code",
+    "text": "↓►← style=\"font-size: 2rem; text-align: center;\"💾"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "TEST resize, align"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "code",
+    "text": "►\n<br>\n<canvas id=\"myCanvas\" width=\"600\" height=\"600\"></canvas>💾"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "TEST canvas console"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "code",
+    "text": "←←←←←←←←←← style=\"border: 1px solid\"💾"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "TEST canvas border"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "code",
+    "text": "►\n\n<script>\n↢</script>↑►\nconst { width, height } = myCanvas;\nconst ctx = myCanvas.getContext(\"2d\");\n\nconst bar = new Bar(inputText.value, width / 2, height / 2);\nbar.draw(ctx);💾↑↑↑↑↑↑\n↑\n<script src=\"bar.js\"></script>💾"
+  },
+  {
+    "type": "comment",
+    "text": "NEW FILE, SAVE bar.js"
+  },
+  {
+    "type": "code",
+    "text": "ñ💾bar.js\nclass Bar {\n}↑►\nconstructor(text, x, y, height = 40) {\n}↑►\nthis.text = text;\nthis.x = x;\nthis.y = y;\nthis.height = height;↓\n\ndraw(ctx) {\n}↑►\nctx.fillText(this.text, this.x, this.y);💾"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "TEST bar"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "code",
+    "text": "↑►\nctx.font = this.height + \"px Arial\";💾ÖÖ\nctx.textAlign = \"center\";💾ÖÖ\nctx.textBaseline = \"middle\";💾ÖÖ"
+  },
+  {
+    "type": "comment",
+    "text": "=>index.html, PAGE DOWN"
+  },
+  {
+    "type": "code",
+    "text": "Ș▼↑↑↑►\n\nlet frame = 0;\nfunction animate() {\n}↑►\nconst rotation = frame / 100;\nmyCanvas.style.transform = `rotate(${rotation}rad)`;\nframe ++;\nrequestAnimationFrame(animate);↓►\nanimate();💾"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "TEST gears need to rotate in an opposite way"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "code",
+    "text": "↑↑↑↑►\nctx.clearRect(0, 0, width, height);\nconst gearRotation = -rotation;\nbar.draw(ctx, gearRotation);💾"
+  },
+  {
+    "type": "comment",
+    "text": "=>bar.js ADD PARAM gearRotation"
+  },
+  {
+    "type": "code",
+    "text": "Ș↑↑↑►←←←, gearRotation►⇓⇓⇓⇓⇒\nfor (let i = 0; i < this.gears.length; i++) {\n}↑►\nthis.gears[i].draw(ctx, gearRotation);💾↑↑↑↑↑►\n\nconst width = (text.length - 1) * height↢↢↢↢↢↢gearSize;↑►\nconst gearSize = height;↓►\nlet gearX = x - width / 2;\nthis.gears = [];\nfor (let i = 0; i < text.length; i++) {\n}↑►\nthis.gears.push(new Gear(gearX, y, text[j], gearSize));\ngearX += gearSize;💾"
+  },
+  {
+    "type": "comment",
+    "text": "=>index.html, SEARCH bar.js"
+  },
+  {
+    "type": "code",
+    "text": "ȘȚbar.js\né►↑\n<script src=\"gear.js\"></script>💾"
+  },
+  {
+    "type": "comment",
+    "text": "NEW FILE, SAVE gear.js"
+  },
+  {
+    "type": "code",
+    "text": "ñ💾gear.js\nclass Gear {\n}↑►\nconstructor(x, y, letter, size = 40) {\n}↑►\nthis.x = x;\nthis.y = y;\nthis.letter = letter;\nthis.size = size;↓\n\ndraw(ctx, rotation) {\n}↑►\nctx.save();\nctx.translate(this.x, this.y);\nctx.rotate(rotation);\n\nctx.restore();↑\n↑\nctx.font = this.size + \"px Arial\";\nctx.textAlign = \"center\";\nctx.textBaseline = \"middle\";\nctx.fillText(this.letter, 0, 0);💾"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "TEST upright letters"
+  },
+  {
+    "type": "code",
+    "text": "Ö"
+  },
+  {
+    "type": "comment",
+    "text": "INTERACT chat\n\nEDIT const => let"
+  },
+  {
+    "type": "code",
+    "text": "let💾"
+  },
+  {
+    "type": "code",
+    "text": "inputText.oninput = (e) => {\n};↑►\nbar = new Bar(e.target.value, width / 2, height / 2);💾"
+  },
+  {
+    "type": "comment",
+    "text": "REMOVE canvas border\nREMOVE pointer events"
+  },
+  {
+    "type": "code",
+    "text": "pointer-events: none💾"
+  },
+  {
+    "type": "comment",
+    "text": "MOVE TO GEAR draw\nADD 2 PARAMETERS"
+  },
+  {
+    "type": "code",
+    "text": "toothCount = 10, toothSize = 2►↓↓↓►\n\nctx.beginPath();\nconst radius = this.size / 2;\nfor (let angle = 0; angle < Math.PI * 2; angle += 0.01) {\n}↑►\nctx.lineTo(\n);↑►\nradius * Math.cos(angle),\nradius * Math.sin(angle)💾↓↓►\nctx.closePath();\nctx.stroke();"
+  },
+  {
+    "type": "comment",
+    "text": ""
+  },
+  {
+    "type": "code",
+    "text": "const wobble = Math.sin(angle * toothCount) * toothSize;"
+  },
+  {
+    "type": "comment",
+    "text": "(radius + wobble) x 2"
+  },
+  {
+    "type": "code",
+    "text": "(→→→→→→ + wobble)"
+  },
+  {
+    "type": "comment",
+    "text": "double width"
+  },
+  {
+    "type": "code",
+    "text": "* 2"
+  },
+  {
+    "type": "comment",
+    "text": "loop fix"
+  },
+  {
+    "type": "code",
+    "text": "* 2 - 1►\nif (i % 2 === 0) {"
+  },
+  {
+    "type": "comment",
+    "text": "WRAP add text [i/2]"
+  },
+  {
+    "type": "code",
+    "text": "} else {\n}↑►\nthis.gears.push(new Gear(gearX, y, \"\", gearSize));💾"
+  },
+  {
+    "type": "comment",
+    "text": "in draw"
+  },
+  {
+    "type": "code",
+    "text": "* (-1) ** i"
+  }
+]
