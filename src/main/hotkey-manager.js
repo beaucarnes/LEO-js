@@ -1,8 +1,11 @@
 const { globalShortcut } = require("electron");
-const { HOTKEYS } = require("../shared/constants");
 const state = require("./state");
 
 class HotkeyManager {
+   constructor(settingsManager) {
+      this.settingsManager = settingsManager;
+   }
+
    handleKey(letter) {
       if (!state.isActive) return;
       if (state.isLocked) {
@@ -13,33 +16,39 @@ class HotkeyManager {
       }
    }
 
-   // called once when the app starts
-   // TO-DO: Interface for choosing shortcuts
    registerSystemShortcuts() {
-      globalShortcut.register("CommandOrControl+P", () => {
+      const shortcuts = this.settingsManager.get('hotkeys');
+      
+      globalShortcut.register(shortcuts.toggleActive, () => {
          state.mainWindow.webContents.send("global-toggle-active");
       });
 
-      globalShortcut.register("CommandOrControl+Left", () => {
+      globalShortcut.register(shortcuts.stepBackward, () => {
          state.mainWindow.webContents.send("global-step-backward");
       });
 
-      globalShortcut.register("CommandOrControl+Right", () => {
+      globalShortcut.register(shortcuts.stepForward, () => {
          state.mainWindow.webContents.send("global-step-forward");
       });
 
-      globalShortcut.register("CommandOrControl+Shift+Space", () => {
+      globalShortcut.register(shortcuts.alwaysOnTop, () => {
          const isTop = state.mainWindow.isAlwaysOnTop();
          state.mainWindow.setAlwaysOnTop(!isTop);
+      });
+
+      globalShortcut.register(shortcuts.toggleTransparency, () => {
+         state.mainWindow.webContents.send("toggle-transparency-event");
       });
    }
 
    registerTypingHotkeys() {
-      HOTKEYS.forEach((letter) => this.registerKey(letter));
+      const hotkeys = this.settingsManager.get('hotkeys.typing');
+      hotkeys.forEach((letter) => this.registerKey(letter));
    }
 
    unregisterTypingHotkeys() {
-      HOTKEYS.forEach((letter) => globalShortcut.unregister(letter));
+      const hotkeys = this.settingsManager.get('hotkeys.typing');
+      hotkeys.forEach((letter) => globalShortcut.unregister(letter));
    }
 
    registerKey(letter) {

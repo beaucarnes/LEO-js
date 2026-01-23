@@ -12,6 +12,7 @@ const uiManager = new UIManager();
 
 let currentStepIndex = 0;
 let executionSteps = [];
+let currentSettings = null;
 
 window.addEventListener("DOMContentLoaded", () => {
    uiManager.cacheElements();
@@ -29,6 +30,7 @@ window.addEventListener("DOMContentLoaded", () => {
    setupEventListeners();
    setupKeyboardShortcuts();
    setupGlobalIpcListeners();
+   setupSettingsListeners();
    populateSpecialKeys();
 });
 
@@ -55,6 +57,161 @@ function setupGlobalIpcListeners() {
       }
    });
    ipcRenderer.on("advance-cursor", advanceCursor);
+   ipcRenderer.on("toggle-transparency-event", () => {
+      ipcRenderer.send("toggle-transparency");
+   });
+   
+   ipcRenderer.on("settings-loaded", (event, settings) => {
+      currentSettings = settings;
+      applySettings(settings);
+   });
+   
+   ipcRenderer.on("settings-saved", (event, settings) => {
+      currentSettings = settings;
+      applySettings(settings);
+      closeSettingsModal();
+   });
+}
+
+function setupSettingsListeners() {
+   const settingsBtn = document.getElementById("settingsBtn");
+   if (settingsBtn) {
+      settingsBtn.onclick = openSettingsModal;
+   }
+   
+   const closeSettings = document.getElementById("closeSettings");
+   if (closeSettings) {
+      closeSettings.onclick = closeSettingsModal;
+   }
+   
+   const saveSettings = document.getElementById("saveSettings");
+   if (saveSettings) {
+      saveSettings.onclick = saveSettingsFromModal;
+   }
+   
+   const resetSettings = document.getElementById("resetSettings");
+   if (resetSettings) {
+      resetSettings.onclick = async () => {
+         if (confirm("Reset all settings to default values?")) {
+            ipcRenderer.send("reset-settings");
+            // wait for settings to be reset and reload modal with new values
+            ipcRenderer.once("settings-loaded", (event, settings) => {
+               loadSettingsIntoModal(settings);
+            });
+         }
+      };
+   }
+   
+   const modal = document.getElementById("settingsModal");
+   if (modal) {
+      modal.onclick = (e) => {
+         if (e.target === modal) {
+            closeSettingsModal();
+         }
+      };
+   }
+}
+
+async function openSettingsModal() {
+   const settings = await ipcRenderer.invoke("get-settings");
+   currentSettings = settings;
+   
+   loadSettingsIntoModal(settings);
+   
+   document.getElementById("settingsModal").classList.add("active");
+}
+
+function loadSettingsIntoModal(settings) {
+   document.getElementById("typingHotkeys").value = settings.hotkeys.typing.join("");
+   document.getElementById("toggleActiveKey").value = settings.hotkeys.toggleActive;
+   document.getElementById("stepBackwardKey").value = settings.hotkeys.stepBackward;
+   document.getElementById("stepForwardKey").value = settings.hotkeys.stepForward;
+   document.getElementById("alwaysOnTopKey").value = settings.hotkeys.alwaysOnTop;
+   document.getElementById("toggleTransparencyKey").value = settings.hotkeys.toggleTransparency;
+   
+   document.getElementById("commentNormalColor").value = settings.colors.commentNormal;
+   document.getElementById("commentActiveColor").value = settings.colors.commentActive;
+   document.getElementById("commentSelectedColor").value = settings.colors.commentSelected;
+   document.getElementById("commentActiveTextColor").value = settings.colors.commentActiveText;
+   document.getElementById("cursorColor").value = settings.colors.cursor;
+   document.getElementById("selectedBorderColor").value = settings.colors.selectedBorder;
+   document.getElementById("textColor").value = settings.colors.textColor;
+   
+   document.getElementById("fontSize").value = settings.fontSize;
+}
+
+function closeSettingsModal() {
+   document.getElementById("settingsModal").classList.remove("active");
+}
+
+function saveSettingsFromModal() {
+   const typingHotkeysStr = document.getElementById("typingHotkeys").value;
+   const typingHotkeys = typingHotkeysStr.split("").filter(c => c.trim());
+   
+   const settings = {
+      hotkeys: {
+         typing: typingHotkeys,
+         toggleActive: document.getElementById("toggleActiveKey").value,
+         stepBackward: document.getElementById("stepBackwardKey").value,
+         stepForward: document.getElementById("stepForwardKey").value,
+         alwaysOnTop: document.getElementById("alwaysOnTopKey").value,
+         toggleTransparency: document.getElementById("toggleTransparencyKey").value
+      },
+      colors: {
+         commentNormal: document.getElementById("commentNormalColor").value,
+         commentActive: document.getElementById("commentActiveColor").value,
+         commentSelected: document.getElementById("commentSelectedColor").value,
+         commentActiveText: document.getElementById("commentActiveTextColor").value,
+         cursor: document.getElementById("cursorColor").value,
+         selectedBorder: document.getElementById("selectedBorderColor").value,
+         textColor: document.getElementById("textColor").value
+      },
+      fontSize: parseInt(document.getElementById("fontSize").value)
+   };
+   
+   ipcRenderer.send("save-settings", settings);
+}
+
+function applySettings(settings) {
+   if (!settings) return;
+   
+   const styleId = "dynamic-settings-styles";
+   let styleEl = document.getElementById(styleId);
+   
+   if (!styleEl) {
+      styleEl = document.createElement("style");
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
+   }
+   
+   styleEl.textContent = `
+      body {
+         font-size: ${settings.fontSize}px;
+      }
+      
+      .comment-block,
+      .code-block {
+         color: ${settings.colors.textColor};
+      }
+      
+      .comment-block {
+         background: ${settings.colors.commentNormal};
+      }
+      
+      .comment-block.active-comment {
+         background: ${settings.colors.commentActive};
+         color: ${settings.colors.commentActiveText};
+      }
+      
+      .block.selected {
+         background-color: ${settings.colors.commentSelected};
+         border-left-color: ${settings.colors.selectedBorder};
+      }
+      
+      .char.cursor {
+         background: ${settings.colors.cursor};
+      }
+   `;
 }
 
 function setupEventListeners() {
@@ -75,24 +232,6 @@ function setupEventListeners() {
 
 function setupKeyboardShortcuts() {
    document.addEventListener("keydown", (e) => {
-      if (e.ctrlKey && e.code === "KeyP") {
-         e.preventDefault();
-         toggleActive();
-      }
-
-      if (e.ctrlKey && e.code === "ArrowLeft") {
-         e.preventDefault();
-         navigateBlocks(-1);
-      }
-      if (e.ctrlKey && e.code === "ArrowRight") {
-         e.preventDefault();
-         navigateBlocks(1);
-      }
-
-      if (e.ctrlKey && e.shiftKey && e.code === "KeyT") {
-         ipcRenderer.send("toggle-transparency");
-      }
-
       if (e.ctrlKey && e.shiftKey && e.code === "KeyS") {
          ipcRenderer.send("resize-window");
       }
@@ -328,11 +467,27 @@ function jumpTo(index) {
 function toggleActive() {
    const isCurrentlyInactive = !uiManager.isActive();
 
+   if (isCurrentlyInactive) {
+      uiManager.deselectBlock();
+   }
+
    uiManager.setTypingActive(isCurrentlyInactive);
    ipcRenderer.send("set-active", isCurrentlyInactive);
    ipcRenderer.send("broadcast-active", isCurrentlyInactive);
 
    renderLesson();
+   
+   if (isCurrentlyInactive && currentStepIndex > 0) {
+      // give the DOM time to render
+      setTimeout(() => {
+         executionSteps.forEach((step, i) => {
+            if (i < currentStepIndex) {
+               step.element.classList.add("consumed");
+            }
+         });
+         updateCursor();
+      }, 0);
+   }
 }
 
 function updateCursor() {

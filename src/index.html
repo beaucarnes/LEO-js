@@ -11,6 +11,7 @@
          <button id="newBtn" title="New Plan">➕</button>
          <button id="saveBtn" title="Save Plan">💾</button>
          <button id="loadBtn" title="Load Plan">📥</button>
+         <button id="settingsBtn" title="Settings">⚙️</button>
          
          <div id="timerSection">
             <button id="timerStartBtn" title="Start Timer">⏱️</button>
@@ -44,6 +45,104 @@
             <div class="sidebar-section">
                <h4>Special Keys</h4>
                <div id="special-keys-container"></div>
+            </div>
+         </div>
+      </div>
+
+      <div id="settingsModal" class="modal">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h2>Settings</h2>
+               <button id="closeSettings" class="close-btn">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+               <div class="settings-section">
+                  <h3>Keyboard Shortcuts</h3>
+                  
+                  <div class="setting-item">
+                     <label>Auto-Typing Hotkeys:</label>
+                     <input type="text" id="typingHotkeys" placeholder="abcdefghijklmnopqrstuvwxyz" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Toggle Auto-Typing:</label>
+                     <input type="text" id="toggleActiveKey" placeholder="CommandOrControl+P" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Step Backward:</label>
+                     <input type="text" id="stepBackwardKey" placeholder="CommandOrControl+Left" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Step Forward:</label>
+                     <input type="text" id="stepForwardKey" placeholder="CommandOrControl+Right" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Always On Top:</label>
+                     <input type="text" id="alwaysOnTopKey" placeholder="CommandOrControl+Shift+Space" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Toggle Transparency:</label>
+                     <input type="text" id="toggleTransparencyKey" placeholder="CommandOrControl+Shift+T" />
+                  </div>
+               </div>
+
+               <div class="settings-section">
+                  <h3>Colors</h3>
+                  
+                  <div class="setting-item">
+                     <label>Comment Block (Normal):</label>
+                     <input type="color" id="commentNormalColor" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Comment Block (Active):</label>
+                     <input type="color" id="commentActiveColor" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Comment Block (Selected):</label>
+                     <input type="color" id="commentSelectedColor" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Active Comment Text:</label>
+                     <input type="color" id="commentActiveTextColor" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Cursor Color:</label>
+                     <input type="color" id="cursorColor" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Selected Border:</label>
+                     <input type="color" id="selectedBorderColor" />
+                  </div>
+                  
+                  <div class="setting-item">
+                     <label>Text Color:</label>
+                     <input type="color" id="textColor" />
+                  </div>
+               </div>
+
+               <div class="settings-section">
+                  <h3>Appearance</h3>
+                  
+                  <div class="setting-item">
+                     <label>Font Size:</label>
+                     <input type="number" id="fontSize" min="10" max="24" />
+                  </div>
+               </div>
+            </div>
+            
+            <div class="modal-footer">
+               <button id="resetSettings" class="btn-secondary">Reset to Defaults</button>
+               <button id="saveSettings" class="btn-primary">Save</button>
             </div>
          </div>
       </div>

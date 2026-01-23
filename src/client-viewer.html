@@ -68,6 +68,7 @@
 
       <script>
          let ws = null;
+         let currentSettings = null;
 
          const elements = {
             lessonName: document.getElementById("lessonName"),
@@ -119,6 +120,9 @@
                case "lesson":
                   updateLessonName(data.lessonName);
                   break;
+               case "settings":
+                  applySettings(data);
+                  break;
             }
          }
 
@@ -126,12 +130,52 @@
             updateProgress(state);
             updateTimer(state.timeRemaining);
             updateLessonName(state.lessonName);
+            if (state.settings) {
+               applySettings(state.settings);
+            }
             if (state.lessonData) {
                updateLessonData(state.lessonData);
             }
             if (state.currentStep !== undefined) {
                updateCursor({ currentStep: state.currentStep });
             }
+         }
+
+         function applySettings(settings) {
+            currentSettings = settings;
+            
+            const styleId = "dynamic-settings-styles";
+            let styleEl = document.getElementById(styleId);
+            
+            if (!styleEl) {
+               styleEl = document.createElement("style");
+               styleEl.id = styleId;
+               document.head.appendChild(styleEl);
+            }
+            
+            styleEl.textContent = `
+               body {
+                  font-size: ${settings.fontSize}px;
+               }
+               
+               .comment-block,
+               .code-block {
+                  color: ${settings.colors.textColor};
+               }
+               
+               .comment-block {
+                  background: ${settings.colors.commentNormal};
+               }
+               
+               .comment-block.active-comment {
+                  background: ${settings.colors.commentActive};
+                  color: ${settings.colors.commentActiveText};
+               }
+               
+               .char.cursor {
+                  background: ${settings.colors.cursor};
+               }
+            `;
          }
 
          function updateLessonData(data) {

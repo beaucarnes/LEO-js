@@ -4,13 +4,20 @@ const state = require("./state");
 const HotkeyManager = require("./hotkey-manager");
 const KeyboardHandler = require("./keyboard-handler");
 const LEOBroadcastServer = require("./websocket-server");
-const broadcastServer = new LEOBroadcastServer(8080);
+const SettingsManager = require("./settings-manager");
 
-const hotkeyManager = new HotkeyManager();
-const keyboardHandler = new KeyboardHandler(hotkeyManager);
+const settingsManager = new SettingsManager();
+const broadcastServer = new LEOBroadcastServer(8080);
+const hotkeyManager = new HotkeyManager(settingsManager);
+const keyboardHandler = new KeyboardHandler(hotkeyManager, settingsManager);
 
 function createWindow() {
-   state.mainWindow = new BrowserWindow(WINDOW_CONFIG);
+   const config = {
+      ...WINDOW_CONFIG,
+      autoHideMenuBar: true, // hide menu bar
+   };
+   state.mainWindow = new BrowserWindow(config);
+   state.mainWindow.setMenuBarVisibility(false); // remove menu bar completely
    const path = require("path");
    state.mainWindow.loadFile(path.join(__dirname, "../index.html"));
 
@@ -18,6 +25,14 @@ function createWindow() {
    state.broadcastServer = broadcastServer;
 
    hotkeyManager.registerSystemShortcuts();
+
+   // send settings to renderer on load
+   state.mainWindow.webContents.on("did-finish-load", () => {
+      state.mainWindow.webContents.send(
+         "settings-loaded",
+         settingsManager.getAll(),
+      );
+   });
 }
 
 function cleanup() {
@@ -59,7 +74,7 @@ ipcMain.on("resize-window", () => {
 ipcMain.handle("show-save-dialog", async () => {
    const result = await dialog.showSaveDialog(state.mainWindow, {
       filters: [{ name: "JSON", extensions: ["json"] }],
-      defaultPath: "lesson.json"
+      defaultPath: "lesson.json",
    });
    return result.filePath;
 });
@@ -67,7 +82,7 @@ ipcMain.handle("show-save-dialog", async () => {
 ipcMain.handle("show-open-dialog", async () => {
    const result = await dialog.showOpenDialog(state.mainWindow, {
       filters: [{ name: "JSON", extensions: ["json"] }],
-      properties: ["openFile"]
+      properties: ["openFile"],
    });
    return result.filePaths[0];
 });
@@ -94,6 +109,42 @@ ipcMain.on("broadcast-active", (event, isActive) => {
 
 ipcMain.on("broadcast-lesson", (event, lessonName) => {
    broadcastServer.updateLessonName(lessonName);
+});
+
+ipcMain.handle("get-settings", () => {
+   return settingsManager.getAll();
+});
+
+ipcMain.on("save-settings", (event, settings) => {
+   Object.keys(settings).forEach((key) => {
+      settingsManager.settings[key] = settings[key];
+   });
+   settingsManager.save();
+
+   // re-register hotkeys with new settings
+   hotkeyManager.unregisterAll();
+   hotkeyManager.registerSystemShortcuts();
+   if (state.isActive) {
+      hotkeyManager.registerTypingHotkeys();
+   }
+
+   // broadcast settings to clients
+   broadcastServer.updateSettings(settings);
+
+   event.reply("settings-saved", settingsManager.getAll());
+});
+
+ipcMain.on("reset-settings", (event) => {
+   settingsManager.reset();
+
+   // re-register hotkeys with default settings
+   hotkeyManager.unregisterAll();
+   hotkeyManager.registerSystemShortcuts();
+   if (state.isActive) {
+      hotkeyManager.registerTypingHotkeys();
+   }
+
+   event.reply("settings-loaded", settingsManager.getAll());
 });
 
 app.whenReady().then(createWindow);

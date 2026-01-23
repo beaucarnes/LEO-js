@@ -1,13 +1,14 @@
 const { keyboard, Key } = require("@computer-use/nut-js");
-const { NUTJS_KEY_MAPPING, HOTKEYS } = require("../shared/constants");
+const { NUTJS_KEY_MAPPING } = require("../shared/constants");
 const state = require("./state");
 
 class KeyboardHandler {
-   constructor(hotkeyManager) {
+   constructor(hotkeyManager, settingsManager) {
       this.hotkeyManager = hotkeyManager;
+      this.settingsManager = settingsManager;
       this.isProcessing = false;
 
-      keyboard.config.autoDelayMs = 0; // makes typing faster
+      keyboard.config.autoDelayMs = 0;
    }
 
    async typeCharacter(char) {
@@ -19,7 +20,8 @@ class KeyboardHandler {
       this.isProcessing = true;
 
       const charLower = char.toLowerCase();
-      const isInterceptorKey = HOTKEYS.includes(charLower);
+      const typingHotkeys = this.settingsManager.get("hotkeys.typing");
+      const isInterceptorKey = typingHotkeys.includes(charLower);
 
       try {
          if (isInterceptorKey) {
@@ -47,7 +49,6 @@ class KeyboardHandler {
    }
 
    async typeWithNutJs(char) {
-      // check if it's a special key
       if (NUTJS_KEY_MAPPING[char]) {
          const mapping = NUTJS_KEY_MAPPING[char];
 
@@ -68,7 +69,6 @@ class KeyboardHandler {
    processQueue() {
       if (state.hasQueuedKeys()) {
          const nextKey = state.dequeueKey();
-
          state.mainWindow.webContents.send("advance-cursor");
       } else {
          state.unlock();

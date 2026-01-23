@@ -1,9 +1,9 @@
-const express = require('express');
-const http = require('http');
-const WebSocket = require('ws');
-const os = require('os');
-const path = require('path');
-const qrcode = require('qrcode-terminal');
+const express = require("express");
+const http = require("http");
+const WebSocket = require("ws");
+const os = require("os");
+const path = require("path");
+const qrcode = require("qrcode-terminal");
 
 class LEOBroadcastServer {
    constructor(port = 8080) {
@@ -17,39 +17,40 @@ class LEOBroadcastServer {
          isActive: false,
          totalSteps: 0,
          currentStep: 0,
-         lessonName: 'No lesson loaded',
-         lessonData: null
+         lessonName: "No lesson loaded",
+         lessonData: null,
+         settings: null,
       };
    }
 
    start() {
-      this.app.get('/', (req, res) => {
-         res.sendFile(path.join(__dirname, '../client-viewer.html'));
+      this.app.get("/", (req, res) => {
+         res.sendFile(path.join(__dirname, "../client-viewer.html"));
       });
 
       // serve other static files (like styles.css)
-      this.app.use(express.static(__dirname + '/../shared/'));
+      this.app.use(express.static(__dirname + "/../shared/"));
 
       // setup WebSocket on the same server
       this.wss = new WebSocket.Server({ server: this.server });
 
-      this.wss.on('connection', (ws) => {
-         console.log('Client connected: ' + ws._socket.remoteAddress);
-         ws.send(JSON.stringify({ type: 'state', data: this.currentState }));
+      this.wss.on("connection", (ws) => {
+         console.log("Client connected: " + ws._socket.remoteAddress);
+         ws.send(JSON.stringify({ type: "state", data: this.currentState }));
       });
 
       this.server.listen(this.port, () => {
-         console.log('LEO Server Started');
+         console.log("LEO Server Started");
          this.printLocalIPs();
       });
    }
 
    printLocalIPs() {
       const interfaces = os.networkInterfaces();
-      
+
       Object.keys(interfaces).forEach((ifname) => {
          interfaces[ifname].forEach((iface) => {
-            if (iface.family === 'IPv4' && !iface.internal) {
+            if (iface.family === "IPv4" && !iface.internal) {
                const url = `http://${iface.address}:${this.port}`;
                console.log(`Client Viewer URL: ${url}`);
                qrcode.generate(url);
@@ -57,7 +58,7 @@ class LEOBroadcastServer {
          });
       });
    }
-   
+
    broadcast(data) {
       if (!this.wss) return;
       const message = JSON.stringify(data);
@@ -72,8 +73,8 @@ class LEOBroadcastServer {
       this.currentState.lessonData = lessonData;
 
       this.broadcast({
-         type: 'lesson-data',
-         data: lessonData
+         type: "lesson-data",
+         data: lessonData,
       });
    }
 
@@ -81,23 +82,24 @@ class LEOBroadcastServer {
       this.currentState.currentStep = currentStep;
 
       this.broadcast({
-         type: 'cursor',
-         data: { currentStep }
+         type: "cursor",
+         data: { currentStep },
       });
    }
 
    updateProgress(currentStep, totalSteps) {
       this.currentState.currentStep = currentStep;
       this.currentState.totalSteps = totalSteps;
-      this.currentState.progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
+      this.currentState.progress =
+         totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
 
       this.broadcast({
-         type: 'progress',
+         type: "progress",
          data: {
             progress: this.currentState.progress,
             currentStep,
-            totalSteps
-         }
+            totalSteps,
+         },
       });
    }
 
@@ -105,8 +107,8 @@ class LEOBroadcastServer {
       this.currentState.timeRemaining = timeRemaining;
 
       this.broadcast({
-         type: 'timer',
-         data: { timeRemaining }
+         type: "timer",
+         data: { timeRemaining },
       });
    }
 
@@ -114,8 +116,8 @@ class LEOBroadcastServer {
       this.currentState.isActive = isActive;
 
       this.broadcast({
-         type: 'active',
-         data: { isActive }
+         type: "active",
+         data: { isActive },
       });
    }
 
@@ -123,8 +125,17 @@ class LEOBroadcastServer {
       this.currentState.lessonName = lessonName;
 
       this.broadcast({
-         type: 'lesson',
-         data: { lessonName }
+         type: "lesson",
+         data: { lessonName },
+      });
+   }
+
+   updateSettings(settings) {
+      this.currentState.settings = settings;
+
+      this.broadcast({
+         type: "settings",
+         data: settings,
       });
    }
 }
