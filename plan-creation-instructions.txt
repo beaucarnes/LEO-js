@@ -16,7 +16,7 @@ Create a JSON-formatted lesson plan for an auto-typing live coding tool based on
 
 Tag/Brace Pairing: Always type opening and closing tags or braces together first (e.g., <html></html> or function(){}).
 
-Always prefix </html> with backspace (↢) for compatibility with VS Code's auto formatting.
+Always prefix </html> and </script> with backspace (↢) for compatibility with VS Code's auto formatting.
 
 Navigation: Immediately after pairing, use ↑ and ► to move the cursor inside the block to continue typing content.
 
