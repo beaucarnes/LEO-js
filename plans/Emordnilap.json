@@ -1,15 +1,11 @@
 [
   {
     "type": "comment",
-    "text": "Live Server ON\nCREATE index.html asd"
+    "text": "Live Server ON\nCREATE index.html"
   },
   {
     "type": "code",
-    "text": "<!DOCTYPE html>\n<html>\n↢</html>↑►\n<head>\n</head>↑►\n<title>Emordnilap JS</title>↓\n<body>\n</body>💾"
-  },
-  {
-    "type": "code",
-    "text": "Ö"
+    "text": "<!DOCTYPE html>\n<html>\n↢</html>↑►\n<head>\n</head>↑►\n<title>Emordnilap JS</title>↓\n<body>\n</body>💾🔁"
   },
   {
     "type": "comment",
@@ -17,15 +13,7 @@
   },
   {
     "type": "code",
-    "text": "Ö"
-  },
-  {
-    "type": "code",
-    "text": "↑►\n<input id=\"inputText\" value=\"FLOW\">💾"
-  },
-  {
-    "type": "code",
-    "text": "Ö"
+    "text": "🔁↑►\n<input id=\"inputText\" value=\"FLOW\">💾🔁"
   },
   {
     "type": "comment",
@@ -33,15 +21,7 @@
   },
   {
     "type": "code",
-    "text": "Ö"
-  },
-  {
-    "type": "code",
-    "text": "↑← style=\"text-align: center;\"💾"
-  },
-  {
-    "type": "code",
-    "text": "Ö"
+    "text": "🔁↑← style=\"text-align: center;\"💾🔁"
   },
   {
     "type": "comment",
@@ -49,15 +29,7 @@
   },
   {
     "type": "code",
-    "text": "Ö"
-  },
-  {
-    "type": "code",
-    "text": "↓►← style=\"font-size: 2rem; text-align: center;\"💾"
-  },
-  {
-    "type": "code",
-    "text": "Ö"
+    "text": "🔁↓►← style=\"font-size: 2rem; text-align: center;\"💾🔁"
   },
   {
     "type": "comment",
@@ -65,15 +37,7 @@
   },
   {
     "type": "code",
-    "text": "Ö"
-  },
-  {
-    "type": "code",
-    "text": "►\n<br>\n<canvas id=\"myCanvas\" width=\"600\" height=\"600\"></canvas>💾"
-  },
-  {
-    "type": "code",
-    "text": "Ö"
+    "text": "🔁►\n<br>\n<canvas id=\"myCanvas\" width=\"600\" height=\"600\"></canvas>💾🔁"
   },
   {
     "type": "comment",
@@ -81,15 +45,7 @@
   },
   {
     "type": "code",
-    "text": "Ö"
-  },
-  {
-    "type": "code",
-    "text": "←←←←←←←←←← style=\"border: 1px solid\"💾"
-  },
-  {
-    "type": "code",
-    "text": "Ö"
+    "text": "🔁←←←←←←←←←← style=\"border: 1px solid\"💾🔁"
   },
   {
     "type": "comment",
@@ -97,11 +53,7 @@
   },
   {
     "type": "code",
-    "text": "Ö"
-  },
-  {
-    "type": "code",
-    "text": "►\n\n<script>\n↢</script>↑►\nconst { width, height } = myCanvas;\nconst ctx = myCanvas.getContext(\"2d\");\n\nconst bar = new Bar(inputText.value, width / 2, height / 2);\nbar.draw(ctx);💾↑↑↑↑↑↑\n↑\n<script src=\"bar.js\"></script>💾"
+    "text": "🔁►\n\n<script>\n↢</script>↑►\nconst { width, height } = myCanvas;\nconst ctx = myCanvas.getContext(\"2d\");\n\nconst bar = new Bar(inputText.value, width / 2, height / 2);\nbar.draw(ctx);💾↑↑↑↑↑↑\n↑\n<script src=\"bar.js\"></script>💾"
   },
   {
     "type": "comment",
@@ -109,11 +61,7 @@
   },
   {
     "type": "code",
-    "text": "ñ💾bar.js\nclass Bar {\n}↑►\nconstructor(text, x, y, height = 40) {\n}↑►\nthis.text = text;\nthis.x = x;\nthis.y = y;\nthis.height = height;↓\n\ndraw(ctx) {\n}↑►\nctx.fillText(this.text, this.x, this.y);💾"
-  },
-  {
-    "type": "code",
-    "text": "Ö"
+    "text": "ñ💾bar.js\nclass Bar {\n}↑►\nconstructor(text, x, y, height = 40) {\n}↑►\nthis.text = text;\nthis.x = x;\nthis.y = y;\nthis.height = height;↓\n\ndraw(ctx) {\n}↑►\nctx.fillText(this.text, this.x, this.y);💾🔁"
   },
   {
     "type": "comment",
@@ -121,11 +69,7 @@
   },
   {
     "type": "code",
-    "text": "Ö"
-  },
-  {
-    "type": "code",
-    "text": "↑►\nctx.font = this.height + \"px Arial\";💾ÖÖ\nctx.textAlign = \"center\";💾ÖÖ\nctx.textBaseline = \"middle\";💾ÖÖ"
+    "text": "🔁↑►\nctx.font = this.height + \"px Arial\";💾🔁🔁\nctx.textAlign = \"center\";💾🔁🔁\nctx.textBaseline = \"middle\";💾🔁🔁"
   },
   {
     "type": "comment",
@@ -133,11 +77,7 @@
   },
   {
     "type": "code",
-    "text": "Ș▼↑↑↑►\n\nlet frame = 0;\nfunction animate() {\n}↑►\nconst rotation = frame / 100;\nmyCanvas.style.transform = `rotate(${rotation}rad)`;\nframe ++;\nrequestAnimationFrame(animate);↓►\nanimate();💾"
-  },
-  {
-    "type": "code",
-    "text": "Ö"
+    "text": "Ș▼↑↑↑►\n\nlet frame = 0;\nfunction animate() {\n}↑►\nconst rotation = frame / 100;\nmyCanvas.style.transform = `rotate(${rotation}rad)`;\nframe ++;\nrequestAnimationFrame(animate);↓►\nanimate();💾🔁"
   },
   {
     "type": "comment",
@@ -145,11 +85,7 @@
   },
   {
     "type": "code",
-    "text": "Ö"
-  },
-  {
-    "type": "code",
-    "text": "↑↑↑↑►\nctx.clearRect(0, 0, width, height);\nconst gearRotation = -rotation;\nbar.draw(ctx, gearRotation);💾"
+    "text": "🔁↑↑↑↑►\nctx.clearRect(0, 0, width, height);\nconst gearRotation = -rotation;\nbar.draw(ctx, gearRotation);💾"
   },
   {
     "type": "comment",
@@ -173,27 +109,15 @@
   },
   {
     "type": "code",
-    "text": "ñ💾gear.js\nclass Gear {\n}↑►\nconstructor(x, y, letter, size = 40) {\n}↑►\nthis.x = x;\nthis.y = y;\nthis.letter = letter;\nthis.size = size;↓\n\ndraw(ctx, rotation) {\n}↑►\nctx.save();\nctx.translate(this.x, this.y);\nctx.rotate(rotation);\n\nctx.restore();↑\n↑\nctx.font = this.size + \"px Arial\";\nctx.textAlign = \"center\";\nctx.textBaseline = \"middle\";\nctx.fillText(this.letter, 0, 0);💾"
-  },
-  {
-    "type": "code",
-    "text": "Ö"
+    "text": "ñ💾gear.js\nclass Gear {\n}↑►\nconstructor(x, y, letter, size = 40) {\n}↑►\nthis.x = x;\nthis.y = y;\nthis.letter = letter;\nthis.size = size;↓\n\ndraw(ctx, rotation) {\n}↑►\nctx.save();\nctx.translate(this.x, this.y);\nctx.rotate(rotation);\n\nctx.restore();↑\n↑\nctx.font = this.size + \"px Arial\";\nctx.textAlign = \"center\";\nctx.textBaseline = \"middle\";\nctx.fillText(this.letter, 0, 0);💾🔁"
   },
   {
     "type": "comment",
-    "text": "TEST upright letters"
+    "text": "TEST upright letters\n\nEDIT const => let"
   },
   {
     "type": "code",
-    "text": "Ö"
-  },
-  {
-    "type": "comment",
-    "text": "INTERACT chat\n\nEDIT const => let"
-  },
-  {
-    "type": "code",
-    "text": "let💾"
+    "text": "🔁let💾"
   },
   {
     "type": "code",
@@ -217,7 +141,7 @@
   },
   {
     "type": "comment",
-    "text": ""
+    "text": "gear design"
   },
   {
     "type": "code",

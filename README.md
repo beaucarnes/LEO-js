@@ -84,6 +84,10 @@ You can disable them by loading the VS Code settings provided in the settings fo
 3. Scan the QR code or visit the URL on your mobile device
 4. The mobile viewer will sync automatically with your presentation
 
+## 📺 Demo
+The TwitterLogoMaker lesson plan was used to create this [video tutorial](https://youtu.be/mwXRhFOxuSQ).
+The Emordnilap lesson plan was used during this [live stream](https://www.youtube.com/live/nuuHeNgZDEY).
+
 ## ⌨️ Keyboard Shortcuts
 
 ### Default Hotkeys
@@ -168,26 +172,6 @@ LEO automatically logs all keystrokes during sessions for analysis:
 - Includes timestamps, characters typed, and session metadata
 - Auto-saves every 10 keystrokes
 - Format: `lessonname_key_presses_TIMESTAMP.json`
-
-## 🔧 Development
-
-### Running in Development Mode
-
-```bash
-npm start
-```
-
-### Building for Production
-
-```bash
-npm run build
-```
-
-### Running Tests
-
-```bash
-npm test
-```
 
 ## 🐛 Troubleshooting
 
