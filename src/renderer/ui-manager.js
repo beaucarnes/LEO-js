@@ -46,7 +46,7 @@ class UIManager {
    }
 
    hideTimerControls() {
-      this.elements.timerStartBtn.style.display = "block";
+      this.elements.timerStartBtn.style.display = "flex";
       this.elements.timerControls.style.display = "none";
    }
 
@@ -92,19 +92,19 @@ class UIManager {
    }
 
    createCharSpan(char, stepIndex) {
-      const span = document.createElement("span");
-      span.className = "char";
+      let el = document.createElement("span");
+      el.className = "char";
 
       if (char === "\n") {
-         span.style.display = "block";
+         el = document.createElement("br");
       } else if (char === " ") {
-         span.innerHTML = "&nbsp;";
+         el.innerHTML = "&nbsp;";
       } else {
-         span.textContent = char;
+         el.textContent = char;
       }
 
-      span.dataset.stepIndex = stepIndex;
-      return span;
+      el.dataset.stepIndex = stepIndex;
+      return el;
    }
 
    appendToLessonContainer(element) {

@@ -72,6 +72,13 @@ class LessonRenderer {
          document.execCommand("insertText", false, text);
       };
 
+      blockDiv.onkeydown = (e) => {
+         if (e.key === 'Enter') {
+            e.preventDefault();
+            document.execCommand('insertText', false, '\n');
+         }
+      };
+
       executionSteps.push({
          type: "block",
          element: blockDiv,
@@ -104,6 +111,13 @@ class LessonRenderer {
             e.preventDefault();
             const text = e.clipboardData.getData("text/plain");
             document.execCommand("insertText", false, text);
+         };
+
+         blockDiv.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+               e.preventDefault();
+               document.execCommand('insertText', false, '\n');
+            }
          };
 
          return globalStepCounter;

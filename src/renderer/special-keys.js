@@ -14,14 +14,14 @@ class SpecialKeys {
          "►",
          "▲",
          "▼",
+         "💾",
+         "🔁",
          "↢",
          "‒",
          "⇑",
          "⇓",
          "⇐",
          "⇒",
-         "💾",
-         "🔁",
       ];
 
       this.uiManager.populateSpecialKeys(keys, (char) => {
