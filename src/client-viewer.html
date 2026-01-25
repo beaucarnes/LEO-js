@@ -69,7 +69,7 @@
          <div class="header-main-row">
             <button id="toggleBtn" onclick="toggleActive()">START</button>
             <div id="lessonName">Not Connected</div>
-            <div id="timerDisplay">--:--</div>
+            <div id="timerDisplay">--:--:--</div>
          </div>
          <div class="progress-bar" id="progressBar"></div>
       </div>
@@ -272,7 +272,7 @@
          }
 
          function updateTimer(timeRemaining) {
-            elements.timerDisplay.textContent = timeRemaining || "--:--";
+            elements.timerDisplay.textContent = timeRemaining || "--:--:--";
          }
 
          function updateLessonName(lessonName) {
@@ -287,18 +287,20 @@
          }
 
          function handleCodeClick(e) {
-            const clickedSpan = e.target.closest(".char");
+            if (!isActive) return;
+            const clickedSpan = e.target.closest('.char');
             if (clickedSpan) {
                const stepIndex = parseInt(clickedSpan.dataset.stepIndex);
-               sendMessage("jump-to", { stepIndex });
+               sendMessage('jump-to', { stepIndex });
             }
          }
 
          function handleBlockClick(e) {
-            const blockDiv = e.target.closest(".block");
+            if (!isActive) return;
+            const blockDiv = e.target.closest('.block');
             if (blockDiv && blockDiv.dataset.stepIndex) {
                const stepIndex = parseInt(blockDiv.dataset.stepIndex);
-               sendMessage("jump-to", { stepIndex });
+               sendMessage('jump-to', { stepIndex });
             }
          }
 
