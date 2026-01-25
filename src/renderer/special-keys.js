@@ -5,24 +5,24 @@ class SpecialKeys {
    }
 
    initialize() {
-      const keys = [
-         "←",
-         "→",
-         "↑",
-         "↓",
-         "◄",
-         "►",
-         "▲",
-         "▼",
-         "💾",
-         "🔁",
-         "↢",
-         "‒",
-         "⇑",
-         "⇓",
-         "⇐",
-         "⇒",
-      ];
+      const keys = {
+         "←": "Arrow Left",
+         "→": "Arrow Right",
+         "↑": "Arrow Up",
+         "↓": "Arrow Down",
+         "◄": "Home",
+         "►": "End",
+         "▲": "Page Up",
+         "▼": "Page Down",
+         "💾": "Save File",
+         "🔁": "Alt Tab",
+         "↢": "Backspace",
+         "‒": "Tab",
+         "⇑": "Shift + Arrow Up",
+         "⇓": "Shift + Arrow Down",
+         "⇐": "Shift + Arrow Left",
+         "⇒": "Shift + Arrow Right",
+      };
 
       this.uiManager.populateSpecialKeys(keys, (char) => {
          this.insertSpecialChar(char);

@@ -123,10 +123,11 @@ class UIManager {
    populateSpecialKeys(keys, onKeyClick) {
       this.elements.specialKeysContainer.innerHTML = "";
 
-      keys.forEach((char) => {
+      Object.keys(keys).forEach((char) => {
          const btn = document.createElement("button");
          btn.className = "key-btn";
          btn.textContent = char;
+         btn.title = keys[char];
          btn.onclick = () => onKeyClick(char);
          this.elements.specialKeysContainer.appendChild(btn);
       });
