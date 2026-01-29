@@ -12,7 +12,7 @@ const NUTJS_KEY_MAPPING = {
 
    // editing
    "↢": { key: Key.Backspace },
-   "‒": { key: Key.Tab },
+   "―": { key: Key.Tab },
 
    // navigation with Shift
    "⇑": { shift: true, key: Key.Up },
