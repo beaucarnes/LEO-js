@@ -5,12 +5,14 @@ const HotkeyManager = require("./hotkey-manager");
 const KeyboardHandler = require("./keyboard-handler");
 const LEOBroadcastServer = require("./websocket-server");
 const SettingsManager = require("./settings-manager");
+const MainProcessTimer = require("./main-timer");
 const { Menu } = require("electron");
 
 const settingsManager = new SettingsManager();
 const broadcastServer = new LEOBroadcastServer(8080);
 const hotkeyManager = new HotkeyManager(settingsManager);
 const keyboardHandler = new KeyboardHandler(hotkeyManager, settingsManager);
+const mainTimer = new MainProcessTimer();
 
 broadcastServer.on('client-toggle-active', () => {
    state.mainWindow.webContents.send('global-toggle-active');
@@ -176,6 +178,27 @@ ipcMain.on("broadcast-active", (event, isActive) => {
 
 ipcMain.on("broadcast-lesson", (event, lessonName) => {
    broadcastServer.updateLessonName(lessonName);
+});
+
+ipcMain.on("timer-start", (event, minutes) => {
+   mainTimer.start(minutes, (timeString) => {
+      if (state.mainWindow) {
+         state.mainWindow.webContents.send("timer-tick", timeString);
+      }
+      broadcastServer.updateTimer(timeString);
+   });
+});
+
+ipcMain.on("timer-adjust", (event, minutes) => {
+   mainTimer.adjust(minutes);
+});
+
+ipcMain.on("timer-stop", () => {
+   mainTimer.stop();
+   if (state.mainWindow) {
+      state.mainWindow.webContents.send("timer-tick", null);
+   }
+   broadcastServer.updateTimer(null);
 });
 
 ipcMain.handle("get-settings", () => {
