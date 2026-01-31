@@ -157,6 +157,8 @@ class LEOBroadcastServer extends EventEmitter {
          this.emit('client-toggle-active');
       } else if (type === 'jump-to') {
          this.emit('client-jump-to', data.stepIndex);
+      } else if (type === 'interaction') {
+         this.emit('client-interaction', data.interactionType);
       }
    }
 }

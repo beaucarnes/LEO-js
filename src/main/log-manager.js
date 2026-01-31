@@ -71,6 +71,14 @@ class LogManager {
       }
    }
 
+   addInteraction(interactionType) {
+      this.addEntry({
+         type: 'interaction',
+         interactionType: interactionType
+      });
+      this.save();
+   }
+
    save() {
       if (!this.logFilePath) {
          console.warn("No log file path set. Cannot save.");

@@ -21,6 +21,9 @@ class UIManager {
          lessonContainer: document.getElementById("lesson-container"),
          editorSidebar: document.getElementById("editor-sidebar"),
          specialKeysContainer: document.getElementById("special-keys-container"),
+         askQuestionBtn: document.getElementById("askQuestionBtn"),
+         answerQuestionBtn: document.getElementById("answerQuestionBtn"),
+         helpBtn: document.getElementById("helpBtn"),
       };
    }
 

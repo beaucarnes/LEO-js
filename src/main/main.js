@@ -22,6 +22,10 @@ broadcastServer.on('client-jump-to', (stepIndex) => {
    state.mainWindow.webContents.send('client-jump-to', stepIndex);
 });
 
+broadcastServer.on('client-interaction', (interactionType) => {
+   state.mainWindow.webContents.send('log-interaction', interactionType);
+});
+
 function createWindow() {
    const path = require("path");
 
