@@ -17,8 +17,8 @@ const NUTJS_KEY_MAPPING = {
    // navigation with Shift
    "⇑": { shift: true, key: Key.Up },
    "⇓": { shift: true, key: Key.Down },
-   "⇐": { shift: true, key: Key.Left },
-   "⇒": { shift: true, key: Key.Right },
+   "⇐": { shift: true, key: Key.Home },
+   "⇒": { shift: true, key: Key.End },
 
    // advanced functions
    "💾": { modifier: Key.LeftControl, key: Key.S },

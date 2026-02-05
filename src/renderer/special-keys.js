@@ -18,7 +18,7 @@ class SpecialKeys {
          "🔁": "Alt Tab",
          "↩": "Enter",
          "↢": "Backspace",
-         "‒": "Tab",
+         "―": "Tab",
          "⇑": "Shift + Arrow Up",
          "⇓": "Shift + Arrow Down",
          "⇐": "Shift + Arrow Left",
