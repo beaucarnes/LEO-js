@@ -3,12 +3,14 @@ class AppState {
     this.mainWindow = null;
     this.isLocked = false;
     this.isActive = false;
+    this.isPaused = false;
     this.lockQueue = [];
   }
 
   reset() {
     this.isLocked = false;
     this.isActive = false;
+    this.isPaused = false;
     this.lockQueue = [];
   }
 
@@ -18,6 +20,14 @@ class AppState {
 
   unlock() {
     this.isLocked = false;
+  }
+
+  pause() {
+    this.isPaused = true;
+  }
+
+  unpause() {
+    this.isPaused = false;
   }
 
   queueKey(key) {

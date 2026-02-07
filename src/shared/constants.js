@@ -31,6 +31,9 @@ const NUTJS_KEY_MAPPING = {
    ω: { modifier: Key.LeftControl, key: Key.W },
    é: { key: Key.Escape },
    Ț: { modifier: Key.LeftControl, key: Key.F },
+   
+   // special pause symbol - no key action
+   "🕛": { pause: 500 },
 };
 
 const HOTKEYS = "abcdefghijklmnopqrstuvwxyz".split("");

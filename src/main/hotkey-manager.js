@@ -8,6 +8,12 @@ class HotkeyManager {
 
    handleKey(letter) {
       if (!state.isActive) return;
+      
+      if (state.isPaused) {
+         console.log("Paused - ignoring hotkey:", letter);
+         return;
+      }
+      
       if (state.isLocked) {
          state.queueKey(letter);
       } else {

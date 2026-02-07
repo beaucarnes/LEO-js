@@ -17,6 +17,10 @@ class KeyboardHandler {
          return;
       }
 
+      if (state.isPaused) {
+         return;
+      }
+
       this.isProcessing = true;
 
       const charLower = char.toLowerCase();
@@ -51,6 +55,15 @@ class KeyboardHandler {
    async typeWithNutJs(char) {
       if (NUTJS_KEY_MAPPING[char]) {
          const mapping = NUTJS_KEY_MAPPING[char];
+
+         if (mapping.pause) {
+            state.pause();
+            
+            await new Promise(resolve => setTimeout(resolve, mapping.pause));
+            
+            state.unpause();
+            return;
+         }
 
          if (mapping.modifier) {
             await keyboard.type(mapping.modifier, mapping.key);

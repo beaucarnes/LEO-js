@@ -23,6 +23,7 @@ class SpecialKeys {
          "⇓": "Shift + Arrow Down",
          "⇐": "Shift + Arrow Left",
          "⇒": "Shift + Arrow Right",
+         "🕛": "Pause (500ms)",
       };
 
       this.uiManager.populateSpecialKeys(keys, (char) => {
