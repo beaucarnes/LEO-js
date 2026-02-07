@@ -77,8 +77,6 @@ function setupEventListeners() {
       adjustTimer(-TIMER_CONFIG.ADJUSTMENT_MINUTES);
    uiManager.getElement("askQuestionBtn").onclick = () =>
       logInteraction("ask-question");
-   uiManager.getElement("answerQuestionBtn").onclick = () =>
-      logInteraction("answer-question");
    uiManager.getElement("helpBtn").onclick = () =>
       logInteraction("help");
 }
