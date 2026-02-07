@@ -8,16 +8,28 @@ class HotkeyManager {
 
    handleKey(letter) {
       if (!state.isActive) return;
-      
       if (state.isPaused) {
          return;
       }
       
-      if (state.isLocked) {
-         state.queueKey(letter);
-      } else {
+      const typingMode = this.settingsManager.get("typingMode");
+      
+      if (typingMode === "auto-run") {
+         if (state.isAutoTyping) {
+            return;
+         }
+         
          state.lock();
-         state.mainWindow.webContents.send("advance-cursor");
+         state.startAutoTyping();
+         this.registerEscapeForAutoTyping();
+         state.mainWindow.webContents.send("start-auto-typing");
+      } else {
+         if (state.isLocked) {
+            state.queueKey(letter);
+         } else {
+            state.lock();
+            state.mainWindow.webContents.send("advance-cursor");
+         }
       }
    }
 
@@ -59,6 +71,20 @@ class HotkeyManager {
    registerKey(letter) {
       if (globalShortcut.isRegistered(letter)) return;
       globalShortcut.register(letter, () => this.handleKey(letter));
+   }
+
+   registerEscapeForAutoTyping() {
+      if (!globalShortcut.isRegistered("Escape")) {
+         globalShortcut.register("Escape", () => {
+            state.mainWindow.webContents.send("stop-auto-typing");
+         });
+      }
+   }
+
+   unregisterEscape() {
+      if (globalShortcut.isRegistered("Escape")) {
+         globalShortcut.unregister("Escape");
+      }
    }
 
    unregisterKey(letter) {

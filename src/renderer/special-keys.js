@@ -19,7 +19,7 @@ class SpecialKeys {
          "↩": "Enter",
          "↢": "Backspace",
          "―": "Tab",
-         "🕛": "Pause (500ms)",
+         "🕛": "Pause (1000ms)",
          "⇑": "Shift + Arrow Up",
          "⇓": "Shift + Arrow Down",
          "⇐": "Shift + Arrow Left",

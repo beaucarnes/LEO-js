@@ -108,6 +108,12 @@ function setupGlobalIpcListeners() {
    ipcRenderer.on('log-interaction', (event, interactionType) => {
       logInteraction(interactionType);
    });
+   ipcRenderer.on("start-auto-typing", () => {
+      cursorManager.startAutoTyping();
+   });
+   ipcRenderer.on("stop-auto-typing", () => {
+      cursorManager.stopAutoTyping();
+   });
 }
 
 function logInteraction(interactionType) {

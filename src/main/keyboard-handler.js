@@ -39,6 +39,10 @@ class KeyboardHandler {
          }
 
          this.processQueue();
+         
+         if (state.mainWindow) {
+            state.mainWindow.webContents.send("character-typed");
+         }
       } catch (error) {
          console.error("Error typing character:", error);
 
@@ -49,6 +53,16 @@ class KeyboardHandler {
          state.clearQueue();
       } finally {
          this.isProcessing = false;
+      }
+   }
+
+   async autoTypeBlock(steps, startIndex, speed) {
+      for (let i = startIndex; i < steps.length; i++) {
+         if (steps[i].type === "block") break;
+         if (steps[i].type === "char") {
+            await this.typeWithNutJs(steps[i].char);
+            await new Promise(resolve => setTimeout(resolve, speed));
+         }
       }
    }
 

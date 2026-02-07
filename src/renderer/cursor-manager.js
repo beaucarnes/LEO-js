@@ -6,6 +6,7 @@ class CursorManager {
       this.logManager = logManager;
       this.currentStepIndex = 0;
       this.executionSteps = [];
+      this.autoTypingActive = false;
    }
 
    setExecutionSteps(steps) {
@@ -58,7 +59,7 @@ class CursorManager {
       });
    }
 
-   advanceCursor() {
+   advanceCursor(waitForCompletion = false) {
       if (this.currentStepIndex >= this.executionSteps.length) return;
 
       const currentStep = this.executionSteps[this.currentStepIndex];
@@ -70,8 +71,20 @@ class CursorManager {
             char: currentStep.char,
          });
 
-         ipcRenderer.send("type-character", currentStep.char);
-         this.currentStepIndex++;
+         if (waitForCompletion) {
+            return new Promise((resolve) => {
+               ipcRenderer.once("character-typed", () => {
+                  this.currentStepIndex++;
+                  localStorage.setItem("lastStepIndex", this.currentStepIndex);
+                  this.updateCursor();
+                  resolve();
+               });
+               ipcRenderer.send("type-character", currentStep.char);
+            });
+         } else {
+            ipcRenderer.send("type-character", currentStep.char);
+            this.currentStepIndex++;
+         }
       } else if (currentStep.type === "block") {
          currentStep.element.classList.add("consumed");
          
@@ -88,8 +101,57 @@ class CursorManager {
          ipcRenderer.send("input-complete");
       }
 
-      localStorage.setItem("lastStepIndex", this.currentStepIndex);
-      this.updateCursor();
+      if (!waitForCompletion || currentStep.type === "block") {
+         localStorage.setItem("lastStepIndex", this.currentStepIndex);
+         this.updateCursor();
+      }
+   }
+
+   async startAutoTyping() {
+      if (this.autoTypingActive) {
+         console.log("Auto-typing already active");
+         return;
+      }
+      
+      this.autoTypingActive = true;
+      
+      const settings = await ipcRenderer.invoke("get-settings");
+      const speed = settings.autoTypingSpeed || 100;
+      
+      const currentIndex = this.currentStepIndex;
+      
+      let endIndex = currentIndex;
+      for (let i = currentIndex; i < this.executionSteps.length; i++) {
+         if (this.executionSteps[i].type === "block" && i > currentIndex) {
+            endIndex = i;
+            break;
+         }
+         endIndex = i + 1;
+      }
+            
+      for (let i = currentIndex; i < endIndex; i++) {
+         if (!this.autoTypingActive) {
+            break;
+         }
+         
+         if (!this.uiManager.isActive()) {
+            break;
+         }
+         
+         await this.advanceCursor(true);
+         await new Promise(resolve => setTimeout(resolve, speed));
+      }
+      
+      this.autoTypingActive = false;
+      ipcRenderer.send("auto-typing-complete");
+   }
+
+   stopAutoTyping() {
+      if (this.autoTypingActive) {
+         console.log("Stopping auto-typing...");
+         this.autoTypingActive = false;
+         ipcRenderer.send("auto-typing-complete"); // Make sure this line is here
+      }
    }
 
    jumpTo(index) {

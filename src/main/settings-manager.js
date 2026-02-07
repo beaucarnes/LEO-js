@@ -24,6 +24,8 @@ class SettingsManager {
             textColor: "#333333",
          },
          fontSize: 14,
+         typingMode: "key-by-key", // "key-by-key" or "auto-run"
+         autoTypingSpeed: 50,
       };
 
       this.settings = this.load();

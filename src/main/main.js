@@ -137,6 +137,12 @@ ipcMain.on("input-complete", () => {
    keyboardHandler.processQueue();
 });
 
+ipcMain.on("auto-typing-complete", () => {
+   state.stopAutoTyping();
+   state.unlock();
+   hotkeyManager.unregisterEscape();
+});
+
 ipcMain.on("toggle-transparency", () => {
    if (!state.mainWindow) return;
    const current = state.mainWindow.getOpacity();

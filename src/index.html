@@ -129,6 +129,26 @@
                      <input type="number" id="fontSize" min="10" max="24" />
                   </div>
                </div>
+
+               <div class="settings-section">
+                  <h3>Auto-Typing Behavior</h3>
+                  
+                  <div class="setting-item">
+                     <select id="typingMode">
+                        <option value="key-by-key">Key-by-Key</option>
+                        <option value="auto-run">Auto-Run (entire block)</option>
+                     </select>
+                  </div>
+                  
+                  <div class="setting-item" id="speedSettingContainer">
+                     <label>Auto-Run Speed: <span id="speedValue">50</span>ms</label>
+                     <input type="range" id="autoTypingSpeed" min="10" max="200" step="5" value="50" />
+                     <div class="speed-labels">
+                        <span>Fast (10ms)</span>
+                        <span>Slow (200ms)</span>
+                     </div>
+                  </div>
+               </div>
             </div>
             
             <div class="modal-footer">

@@ -34,7 +34,7 @@ const NUTJS_KEY_MAPPING = {
    Ț: { modifier: Key.LeftControl, key: Key.F },
    
    // special pause symbol - no key action
-   "🕛": { pause: 500 },
+   "🕛": { pause: 1000 },
 };
 
 const HOTKEYS = "abcdefghijklmnopqrstuvwxyz".split("");
@@ -59,10 +59,17 @@ const LOG_CONFIG = {
    SAVE_INTERVAL: 10, // save log every N key presses
 };
 
+const TYPING_CONFIG = {
+   DEFAULT_SPEED_MS: 50,
+   MIN_SPEED_MS: 10,
+   MAX_SPEED_MS: 200,
+};
+
 module.exports = {
    NUTJS_KEY_MAPPING,
    HOTKEYS,
    WINDOW_CONFIG,
    TIMER_CONFIG,
    LOG_CONFIG,
+   TYPING_CONFIG,
 };

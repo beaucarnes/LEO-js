@@ -4,6 +4,7 @@ class AppState {
     this.isLocked = false;
     this.isActive = false;
     this.isPaused = false;
+    this.isAutoTyping = false;
     this.lockQueue = [];
   }
 
@@ -11,6 +12,7 @@ class AppState {
     this.isLocked = false;
     this.isActive = false;
     this.isPaused = false;
+    this.isAutoTyping = false;
     this.lockQueue = [];
   }
 
@@ -28,6 +30,14 @@ class AppState {
 
   unpause() {
     this.isPaused = false;
+  }
+
+  startAutoTyping() {
+    this.isAutoTyping = true;
+  }
+
+  stopAutoTyping() {
+    this.isAutoTyping = false;
   }
 
   queueKey(key) {

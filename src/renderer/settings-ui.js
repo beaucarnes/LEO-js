@@ -35,6 +35,20 @@ class SettingsUI {
             if (e.target === this.modal) this.close();
          };
       }
+      
+      const typingModeSelect = document.getElementById("typingMode");
+      if (typingModeSelect) {
+         typingModeSelect.addEventListener("change", (e) => {
+            this.updateSpeedVisibility(e.target.value);
+         });
+      }
+      
+      const speedSlider = document.getElementById("autoTypingSpeed");
+      if (speedSlider) {
+         speedSlider.addEventListener("input", (e) => {
+            document.getElementById("speedValue").textContent = e.target.value;
+         });
+      }
    }
 
    async open() {
@@ -76,6 +90,19 @@ class SettingsUI {
       document.getElementById("textColor").value = settings.colors.textColor;
 
       document.getElementById("fontSize").value = settings.fontSize;
+      
+      document.getElementById("typingMode").value = settings.typingMode || "key-by-key";
+      document.getElementById("autoTypingSpeed").value = settings.autoTypingSpeed || 100;
+      document.getElementById("speedValue").textContent = settings.autoTypingSpeed || 100;
+      
+      this.updateSpeedVisibility(settings.typingMode || "key-by-key");
+   }
+
+   updateSpeedVisibility(mode) {
+      const speedContainer = document.getElementById("speedSettingContainer");
+      if (speedContainer) {
+         speedContainer.style.display = mode === "auto-run" ? "block" : "none";
+      }
    }
 
    save() {
@@ -105,6 +132,8 @@ class SettingsUI {
             textColor: document.getElementById("textColor").value,
          },
          fontSize: parseInt(document.getElementById("fontSize").value),
+         typingMode: document.getElementById("typingMode").value,
+         autoTypingSpeed: parseInt(document.getElementById("autoTypingSpeed").value),
       };
 
       ipcRenderer.send("save-settings", settings);
@@ -150,6 +179,18 @@ class SettingsUI {
          
          .char.cursor {
             background: ${settings.colors.cursor};
+         }
+         
+         #speedSettingContainer {
+            display: ${settings.typingMode === "auto-run" ? "block" : "none"};
+         }
+         
+         .speed-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
          }
       `;
    }
