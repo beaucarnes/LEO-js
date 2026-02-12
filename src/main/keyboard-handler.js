@@ -41,6 +41,9 @@ const SHIFTED_CHARS = {
 	'~': Key.Grave,
 };
 
+// Helper to wait - needed for macOS hotkey unregister to take effect
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 class KeyboardHandler {
 	constructor(hotkeyManager, settingsManager) {
 		this.hotkeyManager = hotkeyManager;
@@ -70,11 +73,16 @@ class KeyboardHandler {
 		try {
 			if (isInterceptorKey) {
 				this.hotkeyManager.unregisterKey(charLower);
+				// macOS fix: wait for unregister to take effect
+				await sleep(20);
 			}
 
+			console.log(`[KeyboardHandler] Typing char: "${char}" (isInterceptorKey: ${isInterceptorKey})`);
 			await this.typeWithNutJs(char);
 
 			if (isInterceptorKey) {
+				// macOS fix: wait before re-registering
+				await sleep(20);
 				this.hotkeyManager.registerKey(charLower);
 			}
 
@@ -113,11 +121,16 @@ class KeyboardHandler {
 				try {
 					if (isInterceptorKey) {
 						this.hotkeyManager.unregisterKey(charLower);
+						// macOS fix: wait for unregister to take effect
+						await sleep(20);
 					}
 
+					console.log(`[AutoType] Typing char: "${char}"`);
 					await this.typeWithNutJs(char);
 
 					if (isInterceptorKey) {
+						// macOS fix: wait before re-registering
+						await sleep(20);
 						this.hotkeyManager.registerKey(charLower);
 					}
 
@@ -176,26 +189,30 @@ class KeyboardHandler {
 		}
 
 		// macOS fix: Use Key constants instead of string characters
-		// Check if it's an uppercase letter
 		const charLower = char.toLowerCase();
 		if (CHAR_TO_KEY[charLower]) {
+			const keyToType = CHAR_TO_KEY[charLower];
 			const isUpperCase = char !== charLower && /[A-Z]/.test(char);
+			
+			console.log(`[typeWithNutJs] char="${char}" keyToType=${keyToType} isUpperCase=${isUpperCase}`);
+			
 			if (isUpperCase) {
-				await keyboard.type(Key.LeftShift, CHAR_TO_KEY[charLower]);
+				await keyboard.type(Key.LeftShift, keyToType);
 			} else {
-				await keyboard.type(CHAR_TO_KEY[charLower]);
+				await keyboard.type(keyToType);
 			}
 			return;
 		}
 
 		// Check if it's a shifted character (like ! @ # etc)
 		if (SHIFTED_CHARS[char]) {
+			console.log(`[typeWithNutJs] shifted char="${char}"`);
 			await keyboard.type(Key.LeftShift, SHIFTED_CHARS[char]);
 			return;
 		}
 
 		// Fallback: try the original string method (may not work on macOS)
-		console.log("Fallback typing for char:", char, "code:", char.charCodeAt(0));
+		console.log(`[typeWithNutJs] FALLBACK for char="${char}" code=${char.charCodeAt(0)}`);
 		await keyboard.type(char);
 	}
 
